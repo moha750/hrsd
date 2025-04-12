@@ -1,0 +1,640 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: font;
+}
+
+@font-face {
+  font-family: font;
+  src: url(HRSD-Title.ttf);
+
+}
+
+.preloader {
+	background-color: #fff;
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  z-index: 999;
+  transition: opacity 0.75s, visibility 0.75s;
+}
+
+.preloader-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.bookshelf_wrapper {
+  position: relative;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.books_list {
+  margin: 0 auto;
+  width: 300px;
+  padding: 0;
+}
+
+.book_item {
+  position: absolute;
+  top: -120px;
+  box-sizing: border-box;
+  list-style: none;
+  width: 40px;
+  height: 120px;
+  opacity: 0;
+  background-color: #ffffff;
+  border: 5px solid #1f55a5;
+  transform-origin: bottom left;
+  transform: translateX(300px);
+  -webkit-animation: travel 2500ms linear infinite;
+          animation: travel 2500ms linear infinite;
+}
+.book_item.first {
+  top: -140px;
+  height: 140px;
+}
+.book_item.first:before, .book_item.first:after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background-color: #1f55a5;
+}
+.book_item.first:after {
+  top: initial;
+  bottom: 10px;
+}
+.book_item.second:before, .book_item.second:after, .book_item.fifth:before, .book_item.fifth:after {
+  box-sizing: border-box;
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  height: 17.5px;
+  border-top: 5px solid #1f55a5;
+  border-bottom: 5px solid #1f55a5;
+}
+.book_item.second:after, .book_item.fifth:after {
+  top: initial;
+  bottom: 10px;
+}
+.book_item.third:before, .book_item.third:after {
+  box-sizing: border-box;
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 9px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 5px solid #1f55a5;
+}
+.book_item.third:after {
+  top: initial;
+  bottom: 10px;
+}
+.book_item.fourth {
+  top: -130px;
+  height: 130px;
+}
+.book_item.fourth:before {
+  box-sizing: border-box;
+  content: "";
+  position: absolute;
+  top: 46px;
+  left: 0;
+  width: 100%;
+  height: 17.5px;
+  border-top: 5px solid #1f55a5;
+  border-bottom: 5px solid #1f55a5;
+}
+.book_item.fifth {
+  top: -100px;
+  height: 100px;
+}
+.book_item.sixth {
+  top: -140px;
+  height: 140px;
+}
+.book_item.sixth:before {
+  box-sizing: border-box;
+  content: "";
+  position: absolute;
+  bottom: 31px;
+  left: 0px;
+  width: 100%;
+  height: 5px;
+  background-color: #1f55a5;
+}
+.book_item.sixth:after {
+  box-sizing: border-box;
+  content: "";
+  position: absolute;
+  bottom: 10px;
+  left: 9px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 5px solid #1f55a5;
+}
+.book_item:nth-child(2) {
+  -webkit-animation-delay: 416.6666666667ms;
+          animation-delay: 416.6666666667ms;
+}
+.book_item:nth-child(3) {
+  -webkit-animation-delay: 833.3333333333ms;
+          animation-delay: 833.3333333333ms;
+}
+.book_item:nth-child(4) {
+  -webkit-animation-delay: 1250ms;
+          animation-delay: 1250ms;
+}
+.book_item:nth-child(5) {
+  -webkit-animation-delay: 1666.6666666667ms;
+          animation-delay: 1666.6666666667ms;
+}
+.book_item:nth-child(6) {
+  -webkit-animation-delay: 2083.3333333333ms;
+          animation-delay: 2083.3333333333ms;
+}
+
+.shelf {
+  width: 300px;
+  height: 5px;
+  margin: 0 auto;
+  background-color: #1f55a5;
+  position: relative;
+}
+
+.shelf:after {
+  top: 400%;
+  left: 7.5%;
+}
+
+@-webkit-keyframes move {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 10px;
+  }
+}
+
+@keyframes move {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 10px;
+  }
+}
+@-webkit-keyframes travel {
+  0% {
+    opacity: 0;
+    transform: translateX(300px) rotateZ(0deg) scaleY(1);
+  }
+  6.5% {
+    transform: translateX(279.5px) rotateZ(0deg) scaleY(1.1);
+  }
+  8.8% {
+    transform: translateX(273.6px) rotateZ(0deg) scaleY(1);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(270px) rotateZ(0deg);
+  }
+  17.6% {
+    transform: translateX(247.2px) rotateZ(-30deg);
+  }
+  45% {
+    transform: translateX(165px) rotateZ(-30deg);
+  }
+  49.5% {
+    transform: translateX(151.5px) rotateZ(-45deg);
+  }
+  61.5% {
+    transform: translateX(115.5px) rotateZ(-45deg);
+  }
+  67% {
+    transform: translateX(99px) rotateZ(-60deg);
+  }
+  76% {
+    transform: translateX(72px) rotateZ(-60deg);
+  }
+  83.5% {
+    opacity: 1;
+    transform: translateX(49.5px) rotateZ(-90deg);
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(0px) rotateZ(-90deg);
+  }
+}
+@keyframes travel {
+  0% {
+    opacity: 0;
+    transform: translateX(300px) rotateZ(0deg) scaleY(1);
+  }
+  6.5% {
+    transform: translateX(279.5px) rotateZ(0deg) scaleY(1.1);
+  }
+  8.8% {
+    transform: translateX(273.6px) rotateZ(0deg) scaleY(1);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(270px) rotateZ(0deg);
+  }
+  17.6% {
+    transform: translateX(247.2px) rotateZ(-30deg);
+  }
+  45% {
+    transform: translateX(165px) rotateZ(-30deg);
+  }
+  49.5% {
+    transform: translateX(151.5px) rotateZ(-45deg);
+  }
+  61.5% {
+    transform: translateX(115.5px) rotateZ(-45deg);
+  }
+  67% {
+    transform: translateX(99px) rotateZ(-60deg);
+  }
+  76% {
+    transform: translateX(72px) rotateZ(-60deg);
+  }
+  83.5% {
+    opacity: 1;
+    transform: translateX(49.5px) rotateZ(-90deg);
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(0px) rotateZ(-90deg);
+  }
+}
+
+header {
+background: #214257;
+background: linear-gradient(45deg, rgba(33, 66, 87, 1) 0%, rgba(90, 177, 120, 1) 100%);  text-align: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.hedaerLogo {
+  width: 555px;
+}
+
+.word {
+  color: #fcb614;
+  font-size: 63px;
+  font-family: font;
+}
+
+/*--------------- scroll down icon animation --------------- */
+.scroll-down {
+	position: absolute;
+	left: 50%;
+	text-align: center;
+	z-index: 0;
+	text-decoration: none;
+	text-shadow: 0;
+	width: 50px;
+	height: 50px;
+	border-bottom: 10px solid #fff;
+	border-right: 10px solid #fff;
+	-webkit-transform: translate(-50%, 0) rotate(45deg);
+	animation: fade_move_down 3s cubic-bezier(0.19, 1, 0.22, 1) infinite;
+}
+
+@keyframes fade_move_down {
+	0% {
+		transform: translate(0, -20px) rotate(45deg);
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		transform: translate(0, 20px) rotate(45deg);
+		opacity: 0;
+	}
+}
+/*--------------- scroll down icon animation --------------- */
+
+#adeabBook {
+  background-color: #f5f5f5;
+  padding: 75px 0px;
+  text-align: center;
+}
+
+#book {
+  width: 85%;
+  margin: 0px auto;
+}
+
+.holiday-item {
+  border: solid 1px #c2b5a3;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.5);
+}
+
+img {
+  width: 100%;
+}
+
+.button-87 {
+  margin-top: 50px;
+  padding: 10px 50px;
+  text-align: center;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+  border-radius: 15px;
+  border: 0px;
+  font-size: 25px;
+  box-shadow: 0px 0px 14px -7px #1F55A5;
+  background: #214257;
+  background: linear-gradient(45deg, rgba(33, 66, 87, 1) 0%, rgba(90, 177, 120, 1) 100%);  cursor: pointer;
+  touch-action: manipulation;
+  font-family: font;
+}
+
+.button-87:hover {
+  background-position: right center;
+  color: #fff;
+}
+
+.button-87:active {
+  transform: scale(0.95);
+}
+
+.twitter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 0px;
+}
+
+.twitter h1 {
+  color: #f0b743;
+  font-size: 40px;
+  font-family: font;
+}
+
+.media {
+  margin-top: 20px;
+  padding: 10px 50px;
+  text-align: center;
+  background-size: 200% auto;
+  border-radius: 15px;
+  display: block;
+  border: 0px;
+  font-size: 25px;
+  box-shadow: 0px 0px 14px -7px #1F55A5;
+  background: #214257;
+  background: linear-gradient(45deg, rgba(33, 66, 87, 1) 0%, rgba(90, 177, 120, 1) 100%);  touch-action: manipulation;
+}
+
+i {
+  color: white;
+  padding: 0px 25px;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+
+}
+
+footer {
+  background: #214257;
+  background: linear-gradient(45deg, rgba(33, 66, 87, 1) 0%, rgba(90, 177, 120, 1) 100%);
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+  padding: 25px;
+}
+
+footer h1 {
+  color: white;
+  font-size: 20px;
+  font-family: font;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media only screen and (max-width: 1000px) {
+  .bike {
+    background-color: #fff;
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    z-index: 999;
+    padding:  0px 300px ;
+  }
+
+  .hedaerLogo {
+    width: 500px;
+  }
+  
+  .word {
+    color: #fcb614;
+    font-size: 48px;
+    font-family: font;
+  }
+}
+
+@media only screen and (max-width: 750px) {
+  .hedaerLogo {
+    width: 500px;
+  }
+  
+  .word {
+    color: #fcb614;
+    font-size: 40px;
+    font-family: font;
+  }
+
+  .arrow span {
+    display: block;
+    width: 42px;
+    height: 42px;
+    border-bottom: 5px solid #ffffff00;
+    border-right: 5px solid #ffffff00;
+    transform: rotate(45deg);
+    margin: -5px;
+    animation: scroll1 2s infinite;
+  }
+
+  .button-87 {
+    margin-top: 50px;
+    padding: 10px 40px;
+    text-align: center;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    border-radius: 15px;
+    display: block;
+    border: 0px;
+    font-size: 15px;
+    box-shadow: 0px 0px 14px -7px #1F55A5;
+    background-image: linear-gradient(45deg, #FFC60A 0%, #1F55A5  51%, #FFC60A  100%);
+    cursor: pointer;
+    touch-action: manipulation;
+    font-family: font;
+  }
+
+  .twitter h1 {
+    color: #f0b743;
+    font-size: 33px;
+    font-family: font;
+  }
+
+  i {
+    color: white;
+    padding: 0px 15px;
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  footer h1 {
+    color: white;
+    font-size: 20px;
+    font-family: font;
+  }
+  
+}
+
+@media only screen and (max-width: 550px) {
+  .bike {
+    background-color: #fff;
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    z-index: 999;
+    padding:  0px 75px ;
+  }
+
+  .hedaerLogo {
+    width: 400px;
+  }
+  
+  .word {
+    color: #fcb614;
+    font-size: 35px;
+    font-family: font;
+  }
+
+  .arrow span {
+    display: block;
+    width: 35px;
+    height: 35px;
+    border-bottom: 5px solid #ffffff00;
+    border-right: 5px solid #ffffff00;
+    transform: rotate(45deg);
+    margin: -5px;
+    animation: scroll1 2s infinite;
+  }
+
+  .button-87 {
+    margin-top: 50px;
+    padding: 10px 30px;
+    text-align: center;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    border-radius: 15px;
+    display: block;
+    border: 0px;
+    font-size: 12px;
+    box-shadow: 0px 0px 14px -7px #1F55A5;
+    background: #214257;
+    background: linear-gradient(45deg, rgba(33, 66, 87, 1) 0%, rgba(90, 177, 120, 1) 100%);    cursor: pointer;
+    touch-action: manipulation;
+    font-family: font;
+  }
+
+  .twitter h1 {
+    color: #f0b743;
+    font-size: 25px;
+    font-family: font;
+  }
+
+  .media {
+    margin-top: 20px;
+    padding: 5px 35px;
+    text-align: center;
+    background-size: 200% auto;
+    border-radius: 15px;
+    display: block;
+    border: 0px;
+    font-size: 25px;
+    box-shadow: 0px 0px 14px -7px #1F55A5;
+    background: #214257;
+    background: linear-gradient(45deg, rgba(33, 66, 87, 1) 0%, rgba(90, 177, 120, 1) 100%);    touch-action: manipulation;
+  }
+
+  i {
+    color: white;
+    padding: 0px 10px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  footer h1 {
+    color: white;
+    font-size: 20px;
+    font-family: font;
+  }
+  
+}
+
+
