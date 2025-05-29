@@ -11,19 +11,7 @@
 
 }
 
-.preloader {
-	background-color: #fff;
-  height: 100vh;
-  width: 100%;
-  position: fixed;
-  z-index: 999;
-  transition: opacity 0.75s, visibility 0.75s;
-}
 
-.preloader-hidden {
-  opacity: 0;
-  visibility: hidden;
-}
 
 .bookshelf_wrapper {
   position: relative;
