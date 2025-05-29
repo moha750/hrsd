@@ -1,27 +1,19 @@
-window.addEventListener("load", () => {
-  const loader = document.querySelector(".preloader");
 
-  loader.classList.add("preloader-hidden");
-
-  loader.addEventListener("transitionend", () => {
-    document.body.removeChild(loader);
-  });
-});
 
 
 
 import { PageFlip } from "https://cdn.skypack.dev/page-flip@2.0.7";
 
 const pageFlip = new PageFlip(document.getElementById("holidayList"), {
-	width: 1130, // base page width
-	height: 1598, // base page height
+	width: 1600, // base page width
+	height: 1130, // base page height
   
 	size: "stretch",
 	// set threshold values:
 	maxShadowOpacity: 0.5,
 	showCover: true,
 	mobileScrollSupport: true,
-  startPage: 27,
+  startPage: 21,
   usePortrait:true,
   drawShadow: true,
 });
@@ -31,11 +23,10 @@ pageFlip.loadFromHTML(document.querySelectorAll(".holiday-item"));
 
 var
   words = [
-  'أهلاً وسهلاً بكم',
-  'نضع بين أيديكم',
-  'كتيب حفل معايدة «عيد الفطر» 1446هـ',
-  'فرع وزارة الموارد البشرية والتنمية الاجتماعية بالمنطقة الشرقية',
-  'نتمنى لكم مُشاهدة مُمتعة',
+  'السلام عليكم',
+  'السلام عليكم',
+  'السلام عليكم',
+  'السلام عليكم',
 
 ],
   part,
