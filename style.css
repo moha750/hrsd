@@ -293,10 +293,6 @@ button i {
         transform: translateX(50%);
     }
 
-    .social-links {
-        justify-content: center;
-    }
-
     .buttons {
         flex-direction: column;
         align-items: center;
@@ -384,7 +380,7 @@ button i {
 }
 
 .ministry-logo {
-    width: 85%;
+    width: 75%;
     object-fit: contain;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
@@ -440,27 +436,7 @@ button i {
 
 .footer-credits p {
     font-size: 1.2rem;
-    margin-bottom: 1.5rem;
     color: rgba(255, 255, 255, 0.8);
-}
-
-.social-links {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-}
-
-.social-links a {
-    color: var(--text-light);
-    font-size: 1.5rem;
-    transition: var(--transition);
-    text-decoration: none;
-}
-
-.social-links a:hover {
-    color: var(--secondary-color);
-    transform: translateY(-3px);
 }
 
 .copyright {
@@ -469,21 +445,6 @@ button i {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.6);
-}
-
-/* Responsive Footer */
-@media (max-width: 768px) {
-    .footer {
-        padding: 2rem 0;
-    }
-    
-    .social-links {
-        gap: 1rem;
-    }
-    
-    .social-links a {
-        font-size: 1.3rem;
-    }
 }
 
 button, .hero-btn {
@@ -562,56 +523,8 @@ button:hover, .hero-btn:hover {
 
 .footer-credits p {
     font-size: 1.3rem;
-    margin-bottom: 1.8rem;
     color: rgba(255, 255, 255, 0.85);
     line-height: 1.7;
-}
-
-.social-links {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 2rem;
-    flex-wrap: wrap;
-}
-
-.social-links a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-light);
-    font-size: 1.5rem;
-    border-radius: 50%;
-    transition: var(--transition);
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.social-links a::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, var(--secondary-color), var(--secondary-light));
-    transform: translateY(100%);
-    transition: transform 0.4s ease;
-    z-index: -1;
-}
-
-.social-links a:hover {
-    transform: translateY(-5px);
-    color: white;
-    box-shadow: 0 5px 15px rgba(245, 150, 30, 0.3);
-}
-
-.social-links a:hover::before {
-    transform: translateY(0);
 }
 
 .copyright {
@@ -635,13 +548,8 @@ button:hover, .hero-btn:hover {
 }
 
 .footer-credits,
-.social-links,
 .copyright {
     animation: slideUp 0.6s ease-out forwards;
-}
-
-.social-links {
-    animation-delay: 0.2s;
 }
 
 .copyright {
@@ -650,9 +558,6 @@ button:hover, .hero-btn:hover {
 
 /* Responsive Footer */
 @media (max-width: 768px) {
-    .footer {
-        padding: 3rem 0 1.5rem;
-    }
     
     .footer-credits h3 {
         font-size: 1.5rem;
@@ -660,16 +565,6 @@ button:hover, .hero-btn:hover {
     
     .footer-credits p {
         font-size: 1.1rem;
-    }
-    
-    .social-links {
-        gap: 1.2rem;
-    }
-    
-    .social-links a {
-        width: 45px;
-        height: 45px;
-        font-size: 1.3rem;
     }
     
     .copyright {
@@ -683,46 +578,9 @@ button:hover, .hero-btn:hover {
     .footer {
         padding: 2.5rem 0 1.5rem;
     }
-    
-    .social-links {
-        gap: 1rem;
-    }
-    
-    .social-links a {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-    }
 }
 
-/* تنسيقات جديدة لروابط الزيارة */
-.visit-links {
-    margin: 1.5rem 0;
-    text-align: center;
-}
 
-.visit-links p {
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 1rem;
-    position: relative;
-    display: inline-block;
-}
-
-.visit-links p::after {
-    content: "";
-    position: absolute;
-    bottom: -5px;
-    right: 0;
-    width: 50%;
-    height: 2px;
-    background: var(--secondary-color);
-    transition: width 0.3s ease;
-}
-
-.visit-links:hover p::after {
-    width: 100%;
-}
 
 .website-link {
     margin-top: 1.5rem;
@@ -740,29 +598,6 @@ button:hover, .hero-btn:hover {
     transition: var(--transition);
     border: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 1.1rem;
-}
-
-.website-link a:hover {
-    background: var(--secondary-color);
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(245, 150, 30, 0.3);
-    color: white;
-}
-
-.website-link a i {
-    font-size: 1.2rem;
-}
-
-/* تعديلات للشاشات الصغيرة */
-@media (max-width: 768px) {
-    .visit-links p {
-        font-size: 1rem;
-    }
-    
-    .website-link a {
-        padding: 0.6rem 1.2rem;
-        font-size: 1rem;
-    }
 }
 
 /* Add this to your style.css */
