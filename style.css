@@ -616,3 +616,73 @@ button:hover, .hero-btn:hover {
     border-color: var(--secondary-color);
     box-shadow: 0 0 0 3px rgba(245, 150, 30, 0.2);
 }
+
+/* تنسيقات جديدة لروابط الزيارة */
+.visit-links {
+    margin: 1.5rem 0;
+    text-align: center;
+}
+
+.visit-links p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.visit-links p::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    right: 0;
+    width: 50%;
+    height: 2px;
+    background: var(--secondary-color);
+    transition: width 0.3s ease;
+}
+
+.visit-links:hover p::after {
+    width: 100%;
+}
+
+.website-link {
+    margin-top: 1.5rem;
+}
+
+.website-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.7rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 1.1rem;
+}
+
+.website-link a:hover {
+    background: var(--secondary-color);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(245, 150, 30, 0.3);
+    color: white;
+}
+
+.website-link a i {
+    font-size: 1.2rem;
+}
+
+/* تعديلات للشاشات الصغيرة */
+@media (max-width: 768px) {
+    .visit-links p {
+        font-size: 1rem;
+    }
+    
+    .website-link a {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+    }
+}
