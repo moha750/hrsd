@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // حالة تحميل الصورة
     let imageLoaded = false;
-    let currentImageSrc = '/cards/بطاقة امتنان.png';
+    let currentImageSrc = './cards/بطاقة امتنان.png';
 
     // دالة لتحميل الصورة
     function loadImage(src) {
