@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const fromInput = document.getElementById('from');
     const toPositionInput = document.getElementById('to-position');
     const fromPositionInput = document.getElementById('from-position');
+    const cardTypeSelect = document.getElementById('card-type');
     const downloadBtn = document.getElementById('download-btn');
     const cardImage = document.getElementById('card-image');
     const cardContainer = document.querySelector('.card-container');
@@ -19,17 +20,28 @@ document.addEventListener('DOMContentLoaded', function () {
     previewCanvas.style.height = '100%';
     previewCanvas.style.pointerEvents = 'none';
     
-    // تحميل الصورة أولاً لضمان أنها جاهزة
+    // حالة تحميل الصورة
     let imageLoaded = false;
-    cardImage.onload = function() {
-        imageLoaded = true;
-        updatePreview();
-    };
-    
-    if (cardImage.complete && cardImage.naturalHeight !== 0) {
-        imageLoaded = true;
-        updatePreview();
+    let currentImageSrc = '/cards/بطاقة امتنان.png';
+
+    // دالة لتحميل الصورة
+    function loadImage(src) {
+        imageLoaded = false;
+        currentImageSrc = src;
+        cardImage.src = src;
+        cardImage.onload = function() {
+            imageLoaded = true;
+            updatePreview();
+        };
+        
+        if (cardImage.complete && cardImage.naturalHeight !== 0) {
+            imageLoaded = true;
+            updatePreview();
+        }
     }
+
+    // تحميل الصورة الأولية
+    loadImage(currentImageSrc);
 
     // دالة مشتركة لإعداد النصوص
     function drawTexts(ctx, canvasWidth, canvasHeight) {
@@ -96,6 +108,11 @@ document.addEventListener('DOMContentLoaded', function () {
     toPositionInput.addEventListener('input', updatePreview);
     fromPositionInput.addEventListener('input', updatePreview);
 
+    // تغيير نوع البطاقة
+    cardTypeSelect.addEventListener('change', function() {
+        loadImage(this.value);
+    });
+
     // وظيفة تحميل البطاقة
     downloadBtn.addEventListener('click', function () {
         if (!toInput.value.trim() || !fromInput.value.trim()) {
@@ -117,12 +134,14 @@ document.addEventListener('DOMContentLoaded', function () {
         // استخدام الدالة المشتركة لرسم النصوص (بنفس إعدادات المعاينة)
         drawTexts(ctx, canvas.width, canvas.height);
         
+        const cardTypeName = cardTypeSelect.options[cardTypeSelect.selectedIndex].text;
         const link = document.createElement('a');
-        link.download = 'بطاقة امتنان (الرفاء الوظيفي) بالمنطقة الشرقية.png';
+        link.download = `بطاقة امتنان (${cardTypeName}).png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
     });
     
+    // إغلاق نافذة التحذير
     modalCloseBtn.addEventListener('click', function() {
         document.getElementById('validation-modal').style.display = 'none';
     });
