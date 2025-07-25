@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // حالة تحميل الصورة
     let imageLoaded = false;
-    let currentImageSrc = '/cards/بطاقة امتنان.png';
+    let currentImageSrc = '../cards/بطاقة امتنان.png';
 
     // دالة لتحميل الصورة
     function loadImage(src) {
@@ -58,11 +58,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // دالة مشتركة لإعداد النصوص
     function drawTexts(ctx, canvasWidth, canvasHeight) {
-        // إعدادات الخطوط
+        // إعدادات الخطوط (نفسها للمعاينة والتحميل)
         const fontSizeLarge = canvasWidth / 40;
         const fontSizeMedium = canvasWidth / 52;
 
-        // نص "إلى"
+        // نص "إلى" - خط عريض بحجم كبير
         ctx.font = `bold ${fontSizeLarge}px 'Tajawal', sans-serif`;
         ctx.fillStyle = '#7a7c7f';
         ctx.textAlign = 'right';
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
             canvasHeight * 0.577
         );
 
-        // منصب المرسل إليه
+        // منصب المرسل إليه - خط مختلف بحجم متوسط
         ctx.font = `bold ${fontSizeMedium}px 'Tajawal', sans-serif`;
         ctx.fillStyle = '#ffc209';
         ctx.textAlign = 'center';
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
             canvasHeight * 0.64
         );
 
-        // نص "من"
+        // نص "من" - نفس خط "إلى"
         ctx.font = `bold ${fontSizeLarge}px 'Tajawal', sans-serif`;
         ctx.fillStyle = '#7a7c7f';
         ctx.textAlign = 'right';
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
             canvasHeight * 0.725
         );
 
-        // منصب المرسل
+        // منصب المرسل - نفس خط المنصب الأول
         ctx.font = `bold ${fontSizeMedium}px 'Tajawal', sans-serif`;
         ctx.fillStyle = '#ffc209';
         ctx.textAlign = 'center';
@@ -103,17 +103,19 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     }
 
-    // تحديث المعاينة
+    // تحديث المعاينة عند تغيير النصوص
     function updatePreview() {
         if (!imageLoaded) return;
 
         previewCanvas.width = cardImage.naturalWidth;
         previewCanvas.height = cardImage.naturalHeight;
         previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+        // استخدام الدالة المشتركة لرسم النصوص
         drawTexts(previewCtx, previewCanvas.width, previewCanvas.height);
     }
 
-    // إضافة مستمعات الأحداث
+    // إضافة مستمعات الأحداث للتحديث الفوري
     toInput.addEventListener('input', updatePreview);
     fromInput.addEventListener('input', updatePreview);
     toPositionInput.addEventListener('input', updatePreview);
@@ -128,68 +130,30 @@ document.addEventListener('DOMContentLoaded', function () {
     function shareOnWhatsApp(imageDataUrl) {
         const cardTypeName = cardTypeSelect.options[cardTypeSelect.selectedIndex].text;
         const message = `*بطاقة امتنان* 🎁\n\nإلى: ${toInput.value}\nمن: ${fromInput.value}\n\n${cardTypeName}\n\n#حملة_امتنان`;
+        
+        // إنشاء رابط واتساب مع النص
         const shareUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        
+        // فتح النافذة الجديدة لمشاركة الرسالة
         window.open(shareUrl, '_blank');
     }
 
-    // عرض نافذة المشاركة مع تعليمات لحفظ الصورة
-    function showSaveInstructionsModal(imageDataUrl) {
-        const modal = document.createElement('div');
-        modal.id = 'save-instructions-modal';
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.width = '100%';
-        modal.style.height = '100%';
-        modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
-        modal.style.display = 'flex';
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
-        modal.style.zIndex = '1000';
-        modal.style.flexDirection = 'column';
-        modal.style.color = 'white';
-        modal.style.textAlign = 'center';
-        modal.style.padding = '20px';
-
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-        modal.innerHTML = `
-            <h3 style="color: #ffc209; margin-bottom: 20px;">تم تحميل البطاقة بنجاح</h3>
-            ${isIOS ? `
-                <p style="margin-bottom: 20px;">للحفظ في ألبوم الصور:</p>
-                <ol style="text-align: right; margin-bottom: 20px; padding-right: 20px;">
-                    <li>افتح تطبيق "الملفات"</li>
-                    <li>ابحث عن الملف "بطاقة_امتنان.png"</li>
-                    <li>اضغط مطولاً على الملف</li>
-                    <li>اختر "مشاركة"</li>
-                    <li>اختر "حفظ الصورة"</li>
-                </ol>
-            ` : `
-                <p style="margin-bottom: 20px;">تم حفظ البطاقة في مجلد التنزيلات</p>
-            `}
-            <div style="display: flex; gap: 10px;">
-                <button id="whatsapp-share-btn" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-                    <i class="fab fa-whatsapp"></i> مشاركة عبر الواتساب
-                </button>
-                <button id="close-save-modal" style="background-color: #f8f9fa; color: #333; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-                    إغلاق
-                </button>
-            </div>
-        `;
-
-        document.body.appendChild(modal);
+    // عرض نافذة المشاركة بعد التحميل
+    function showWhatsAppModal(imageDataUrl) {
+        const whatsappModal = document.getElementById('whatsapp-modal');
+        whatsappModal.style.display = 'flex';
         toggleBodyScroll(false);
-
-        document.getElementById('whatsapp-share-btn').addEventListener('click', function() {
+        
+        document.getElementById('whatsapp-share-btn').onclick = function() {
             shareOnWhatsApp(imageDataUrl);
-            modal.remove();
+            whatsappModal.style.display = 'none';
             toggleBodyScroll(true);
-        });
-
-        document.getElementById('close-save-modal').addEventListener('click', function() {
-            modal.remove();
+        };
+        
+        document.getElementById('whatsapp-cancel-btn').onclick = function() {
+            whatsappModal.style.display = 'none';
             toggleBodyScroll(true);
-        });
+        };
     }
 
     // وظيفة تحميل البطاقة
@@ -213,17 +177,14 @@ document.addEventListener('DOMContentLoaded', function () {
         drawTexts(ctx, canvas.width, canvas.height);
 
         const cardTypeName = cardTypeSelect.options[cardTypeSelect.selectedIndex].text;
-        const fileName = `بطاقة_امتنان_${cardTypeName}.png`.replace(/\s+/g, '_');
-        
-        // طريقة التنزيل الأساسية
         const link = document.createElement('a');
-        link.download = fileName;
+        link.download = `بطاقة_امتنان_${cardTypeName}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-
-        // عرض تعليمات الحفظ بعد التنزيل
+        
+        // عرض نافذة المشاركة بعد التحميل
         setTimeout(() => {
-            showSaveInstructionsModal(canvas.toDataURL('image/png'));
+            showWhatsAppModal(canvas.toDataURL('image/png'));
         }, 1000);
     });
 
