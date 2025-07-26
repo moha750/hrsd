@@ -34,7 +34,7 @@
             transform: translateY(-5px);
         }
 
-        h1, h2 {
+        h1, h2, h3 {
             color: #2D4159;
         }
 
@@ -88,30 +88,40 @@
             margin-top: 10px;
         }
 
-        /* تنسيقات جديدة لقسم المناطق */
-        .locations-section {
+        /* تنسيقات جديدة لقسم المدن */
+        .cities-section {
             margin-top: 40px;
         }
 
-        .location-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .location-stats {
-            display: flex;
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
-            flex-wrap: wrap;
+            margin-top: 20px;
         }
 
-        .location-stat {
+        .city-card {
             background: white;
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            flex: 1;
-            min-width: 200px;
+            text-align: center;
+        }
+
+        .city-name {
+            font-weight: 500;
+            color: #2D4159;
+            margin-bottom: 5px;
+        }
+
+        .city-count {
+            font-size: 20px;
+            color: #F5961E;
+            font-weight: 700;
+        }
+
+        .top-cities {
+            margin-top: 30px;
         }
     </style>
 </head>
@@ -149,41 +159,35 @@
         <tbody></tbody>
     </table>
 
-    <div class="locations-section">
-        <h2>المناطق الجغرافية للزوار</h2>
-        <div class="location-info">
-            <p>يتم عرض المناطق بناءً على بيانات الموقع الجغرافي للزوار</p>
+    <div class="cities-section">
+        <h2>توزيع الزوار حسب المدن</h2>
+        
+        <div class="top-cities">
+            <h3>أهم المدن</h3>
+            <div class="cities-grid" id="top-cities-grid">
+                <!-- سيتم ملؤها بالبيانات -->
+            </div>
         </div>
         
-        <div class="location-stats">
-            <div class="location-stat">
-                <h3>المنطقة الشرقية</h3>
-                <div class="stat-value" id="eastern-region">0</div>
-            </div>
-            
-            <div class="location-stat">
-                <h3>المنطقة الغربية</h3>
-                <div class="stat-value" id="western-region">0</div>
-            </div>
-            
-            <div class="location-stat">
-                <h3>المنطقة الشمالية</h3>
-                <div class="stat-value" id="northern-region">0</div>
-            </div>
-            
-            <div class="location-stat">
-                <h3>المنطقة الجنوبية</h3>
-                <div class="stat-value" id="southern-region">0</div>
-            </div>
-        </div>
+        <h3 style="margin-top: 30px;">جميع المدن المسجلة</h3>
+        <table id="cities-table">
+            <thead>
+                <tr>
+                    <th>المدينة</th>
+                    <th>عدد الزيارات</th>
+                    <th>النسبة المئوية</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
         
         <h3 style="margin-top: 30px;">تفاصيل المواقع</h3>
         <table id="locations-table">
             <thead>
                 <tr>
+                    <th>المدينة</th>
                     <th>خط العرض</th>
                     <th>خط الطول</th>
-                    <th>المنطقة</th>
                     <th>الوقت</th>
                 </tr>
             </thead>
@@ -209,16 +213,6 @@
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-
-        // دالة لتحديد المنطقة بناءً على الإحداثيات
-        function determineRegion(lat, lng) {
-            // هذه قيم تقريبية، يمكنك ضبطها حسب حدود المناطق في السعودية
-            if (lat > 24 && lng > 46) return "المنطقة الشرقية";
-            if (lat > 21 && lng < 39) return "المنطقة الغربية";
-            if (lat > 28) return "المنطقة الشمالية";
-            if (lat < 20) return "المنطقة الجنوبية";
-            return "منطقة أخرى";
-        }
 
         // دالة لجمع القيم من جميع الأيام
         function sumAllValues(snapshot) {
@@ -257,8 +251,8 @@
                 document.getElementById('total-downloads').textContent = totalDownloads.toLocaleString();
 
                 // عرض التحميلات حسب نوع البطاقة
-                const tbody = document.querySelector('#card-stats tbody');
-                tbody.innerHTML = '';
+                const cardStatsTbody = document.querySelector('#card-stats tbody');
+                cardStatsTbody.innerHTML = '';
 
                 if (cardsSnapshot.exists()) {
                     cardsSnapshot.forEach(cardSnapshot => {
@@ -272,10 +266,10 @@
                             <td>${cardName}</td>
                             <td>${cardCount.toLocaleString()}</td>
                         `;
-                        tbody.appendChild(row);
+                        cardStatsTbody.appendChild(row);
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="2">لا توجد بيانات متاحة</td></tr>';
+                    cardStatsTbody.innerHTML = '<tr><td colspan="2">لا توجد بيانات متاحة</td></tr>';
                 }
 
                 // معالجة بيانات الموقع الجغرافي
@@ -283,45 +277,66 @@
                     const locationsCount = locationsSnapshot.numChildren();
                     document.getElementById('locations-count').textContent = locationsCount.toLocaleString();
 
-                    // عدادات المناطق
-                    const regionCounts = {
-                        "المنطقة الشرقية": 0,
-                        "المنطقة الغربية": 0,
-                        "المنطقة الشمالية": 0,
-                        "المنطقة الجنوبية": 0,
-                        "منطقة أخرى": 0
-                    };
-
-                    // عرض تفاصيل المواقع
+                    // عدادات المدن
+                    const cityCounts = {};
                     const locationsTbody = document.querySelector('#locations-table tbody');
                     locationsTbody.innerHTML = '';
 
                     locationsSnapshot.forEach(locationSnapshot => {
                         const location = locationSnapshot.val();
-                        const region = determineRegion(location.lat, location.lng);
+                        const city = location.city || 'غير معروف';
                         
-                        // زيادة عداد المنطقة
-                        regionCounts[region]++;
+                        // زيادة عداد المدينة
+                        cityCounts[city] = (cityCounts[city] || 0) + 1;
                         
-                        // إضافة صف إلى الجدول
+                        // إضافة صف إلى جدول المواقع
                         const row = document.createElement('tr');
                         row.innerHTML = `
+                            <td>${city}</td>
                             <td>${location.lat.toFixed(4)}</td>
                             <td>${location.lng.toFixed(4)}</td>
-                            <td>${region}</td>
                             <td>${new Date(location.timestamp).toLocaleString('ar-SA')}</td>
                         `;
                         locationsTbody.appendChild(row);
                     });
 
-                    // تحديث عدادات المناطق
-                    document.getElementById('eastern-region').textContent = regionCounts["المنطقة الشرقية"].toLocaleString();
-                    document.getElementById('western-region').textContent = regionCounts["المنطقة الغربية"].toLocaleString();
-                    document.getElementById('northern-region').textContent = regionCounts["المنطقة الشمالية"].toLocaleString();
-                    document.getElementById('southern-region').textContent = regionCounts["المنطقة الجنوبية"].toLocaleString();
+                    // تحويل عدادات المدن إلى مصفوفة وترتيبها تنازلياً
+                    const sortedCities = Object.entries(cityCounts)
+                        .sort((a, b) => b[1] - a[1]);
+
+                    // عرض أهم المدن
+                    const topCitiesGrid = document.getElementById('top-cities-grid');
+                    topCitiesGrid.innerHTML = '';
+                    
+                    // عرض أفضل 6 مدن
+                    sortedCities.slice(0, 6).forEach(([city, count]) => {
+                        const cityCard = document.createElement('div');
+                        cityCard.className = 'city-card';
+                        cityCard.innerHTML = `
+                            <div class="city-name">${city}</div>
+                            <div class="city-count">${count.toLocaleString()}</div>
+                        `;
+                        topCitiesGrid.appendChild(cityCard);
+                    });
+
+                    // عرض جميع المدن في الجدول
+                    const citiesTbody = document.querySelector('#cities-table tbody');
+                    citiesTbody.innerHTML = '';
+
+                    sortedCities.forEach(([city, count]) => {
+                        const percentage = ((count / locationsCount) * 100).toFixed(1);
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${city}</td>
+                            <td>${count.toLocaleString()}</td>
+                            <td>${percentage}%</td>
+                        `;
+                        citiesTbody.appendChild(row);
+                    });
                 } else {
                     document.getElementById('locations-count').textContent = '0';
                     document.querySelector('#locations-table tbody').innerHTML = '<tr><td colspan="4">لا توجد بيانات موقع متاحة</td></tr>';
+                    document.querySelector('#cities-table tbody').innerHTML = '<tr><td colspan="3">لا توجد بيانات مدن متاحة</td></tr>';
                 }
             }).catch(error => {
                 console.error('Error loading statistics:', error);

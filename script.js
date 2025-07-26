@@ -332,3 +332,67 @@ function recordUserLocation() {
 
 // استدعاء الدالة عند تحميل الصفحة
 recordUserLocation();
+
+// أضف هذه الدالة في script.js
+function recordUserLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const { latitude, longitude } = position.coords;
+                
+                // استخدام خدمة Geocoding للحصول على اسم المدينة
+                const cityName = await getCityName(latitude, longitude);
+                
+                const locationData = {
+                    lat: latitude,
+                    lng: longitude,
+                    city: cityName || 'غير معروف',
+                    timestamp: new Date().toISOString()
+                };
+                
+                // تسجيل الموقع في Firebase
+                database.ref('locations').push(locationData)
+                    .then(() => console.log('Location recorded successfully'))
+                    .catch(error => console.error('Error recording location:', error));
+            },
+            (error) => {
+                console.error('Geolocation error:', error);
+                database.ref('location_errors').push({
+                    error: error.message,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        );
+    } else {
+        console.log('Geolocation is not supported by this browser.');
+        database.ref('location_errors').push({
+            error: 'Geolocation not supported',
+            timestamp: new Date().toISOString()
+        });
+    }
+}
+
+// دالة للحصول على اسم المدينة باستخدام Nominatim (OpenStreetMap)
+async function getCityName(lat, lng) {
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ar`);
+        const data = await response.json();
+        
+        if (data.address) {
+            // محاولة الحصول على اسم المدينة أو المحافظة
+            return data.address.city || 
+                   data.address.town || 
+                   data.address.village || 
+                   data.address.county || 
+                   data.address.state || 
+                   'غير معروف';
+        }
+        return 'غير معروف';
+    } catch (error) {
+        console.error('Geocoding error:', error);
+        return 'غير معروف';
+    }
+}
+
+// استدعاء الدالة عند تحميل الصفحة
+recordUserLocation();
