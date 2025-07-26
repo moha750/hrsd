@@ -7,8 +7,6 @@
     <title>لوحة التحكم - إحصائيات الموقع</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js for data visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary-color: #2D4159;
@@ -154,24 +152,6 @@
 
         .trend-neutral {
             color: #7f8c8d;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
-        }
-
-        .chart-title {
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--secondary-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         table {
@@ -440,11 +420,6 @@
                 </div>
             </div>
 
-            <div class="chart-container">
-                <h2 class="chart-title"><i class="fas fa-chart-bar"></i> التحميلات خلال الأسبوع الماضي</h2>
-                <canvas id="weekly-chart"></canvas>
-            </div>
-
             <div class="tabs">
                 <div class="tab active" data-tab="card-stats">التحميلات حسب نوع البطاقة</div>
                 <div class="tab" data-tab="cities">توزيع الزوار حسب المدن</div>
@@ -536,9 +511,6 @@
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // متغيرات الرسم البياني
-        let weeklyChart;
-
         // دالة لجمع القيم من جميع الأيام
         function sumAllValues(snapshot) {
             let total = 0;
@@ -565,47 +537,6 @@
                 minute: '2-digit'
             };
             return new Date(dateString).toLocaleDateString('ar-SA', options);
-        }
-
-        // دالة لإنشاء الرسم البياني
-        function createWeeklyChart(downloadsData) {
-            const ctx = document.getElementById('weekly-chart').getContext('2d');
-            
-            // إذا كان هناك رسم بياني موجود، قم بتدميره أولاً
-            if (weeklyChart) {
-                weeklyChart.destroy();
-            }
-            
-            weeklyChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
-                    datasets: [{
-                        label: 'عدد التحميلات',
-                        data: downloadsData,
-                        backgroundColor: 'rgba(245, 150, 30, 0.7)',
-                        borderColor: 'rgba(245, 150, 30, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            rtl: true
-                        },
-                        tooltip: {
-                            rtl: true
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
         }
 
         // دالة للتبديل بين التبويبات
@@ -653,10 +584,6 @@
                 // عرض إجمالي التحميلات
                 const totalDownloads = sumAllValues(downloadsSnapshot);
                 document.getElementById('total-downloads').textContent = totalDownloads.toLocaleString('ar-SA');
-
-                // إنشاء بيانات عشوائية للرسم البياني (يمكن استبدالها ببيانات حقيقية)
-                const weeklyDownloadsData = Array.from({length: 7}, () => Math.floor(Math.random() * 100) + 20);
-                createWeeklyChart(weeklyDownloadsData);
 
                 // عرض التحميلات حسب نوع البطاقة
                 const cardStatsTbody = document.querySelector('#card-stats tbody');
