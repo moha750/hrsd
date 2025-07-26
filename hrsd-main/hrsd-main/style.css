@@ -7,22 +7,16 @@
     padding: 0;
     margin: 0;
     font-family: bold;
-    box-sizing: border-box;
 }
 
 :root {
     /* الألوان الجديدة وفقاً لهوية الوزارة */
-    --primary-color: #2D4159;
-    /* Pantone 3025 C (RGB 20-65-90) */
+    --primary-color: #2D4159; /* Pantone 3025 C (RGB 20-65-90) */
     --primary-dark: #142837;
-    --secondary-color: #F5961E;
-    /* Pantone 1375 C (RGB 245-150-30) */
-    --secondary-light: #FAB414;
-    /* Pantone 1235 C (RGB 250-180-20) */
-    --accent-color: #2DB473;
-    /* Pantone 3385 C (RGB 45-180-115) */
-    --accent-dark: #148287;
-    /* Pantone 2237 C (RGB 20-130-135) */
+    --secondary-color: #F5961E; /* Pantone 1375 C (RGB 245-150-30) */
+    --secondary-light: #FAB414; /* Pantone 1235 C (RGB 250-180-20) */
+    --accent-color: #2DB473; /* Pantone 3385 C (RGB 45-180-115) */
+    --accent-dark: #148287; /* Pantone 2237 C (RGB 20-130-135) */
     --light-color: #f8f9fa;
     --dark-color: #343a40;
     --text-color: #333;
@@ -41,7 +35,7 @@ body {
 }
 
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
 /* تحسينات قسم الهيرو */
@@ -98,8 +92,8 @@ html {
 }
 
 .hero-btn {
-    position: relative;
-    overflow: hidden;
+      position: relative;
+  overflow: hidden;
     display: inline-block;
     background: var(--text-light);
     color: var(--primary-color);
@@ -113,22 +107,22 @@ html {
 }
 
 .hero-btn::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.5);
-    opacity: 0;
-    border-radius: 100%;
-    transform: scale(1, 1) translate(-50%, -50%);
-    transform-origin: 50% 50%;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
 }
 
 .hero-btn:focus::after,
 .hero-btn:hover::after {
-    animation: ripple 1s ease-out;
+  animation: ripple 1s ease-out;
 }
 
 .hero-btn:hover {
@@ -139,15 +133,14 @@ html {
 }
 
 @keyframes ripple {
-    0% {
-        transform: scale(0, 0);
-        opacity: 0.5;
-    }
-
-    100% {
-        transform: scale(20, 20);
-        opacity: 0;
-    }
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(20, 20);
+    opacity: 0;
+  }
 }
 
 /* تحسينات قسم البطاقة */
@@ -175,13 +168,13 @@ html {
 }
 
 #card-creator {
-    opacity: 0;
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  opacity: 0;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
 #card-creator.visible {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .card-container {
@@ -454,14 +447,12 @@ button i {
     color: rgba(255, 255, 255, 0.6);
 }
 
-button,
-.hero-btn {
+button, .hero-btn {
     background-color: var(--secondary-color);
     color: var(--text-light);
 }
 
-button:hover,
-.hero-btn:hover {
+button:hover, .hero-btn:hover {
     background-color: var(--secondary-light);
 }
 
@@ -550,7 +541,6 @@ button:hover,
         opacity: 0;
         transform: translateY(30px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -568,15 +558,15 @@ button:hover,
 
 /* Responsive Footer */
 @media (max-width: 768px) {
-
+    
     .footer-credits h3 {
         font-size: 1.5rem;
     }
-
+    
     .footer-credits p {
         font-size: 1.1rem;
     }
-
+    
     .copyright {
         font-size: 0.9rem;
         margin-top: 3rem;
@@ -690,7 +680,7 @@ button:hover,
     .visit-links p {
         font-size: 1rem;
     }
-
+    
     .website-link a {
         padding: 0.6rem 1.2rem;
         font-size: 1rem;

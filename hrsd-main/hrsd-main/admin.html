@@ -7,11 +7,6 @@
     <title>لوحة التحكم - إحصائيات الموقع</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <style>
         :root {
             --primary-color: #2D4159;
@@ -28,16 +23,10 @@
             --border-radius: 10px;
         }
 
-        @font-face {
-            font-family: bold;
-            src: url(HRSD-Bold.ttf);
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: bold;
         }
 
         body {
@@ -175,8 +164,7 @@
             overflow: hidden;
         }
 
-        th,
-        td {
+        th, td {
             padding: 12px 15px;
             border: 1px solid #e0e0e0;
             text-align: right;
@@ -219,13 +207,8 @@
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* تنسيقات جديدة لقسم المدن */
@@ -349,13 +332,6 @@
             overflow-x: auto;
         }
 
-        .update {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
         /* تنسيقات للهواتف */
         @media (max-width: 768px) {
             .header-content {
@@ -398,8 +374,8 @@
 <body>
     <header>
         <div class="header-content">
-            <h1><i class="fas fa-chart-line"></i> إحصائيات الموقع</h1>
-            <div class="update">
+            <h1><i class="fas fa-chart-line"></i> لوحة التحكم - إحصائيات الموقع</h1>
+            <div>
                 <span class="last-updated" id="last-updated"></span>
                 <button class="refresh-btn" id="refresh-btn">
                     <i class="fas fa-sync-alt"></i> تحديث البيانات
@@ -473,7 +449,7 @@
                             <!-- سيتم ملؤها بالبيانات -->
                         </div>
                     </div>
-
+                    
                     <h3 class="section-title"><i class="fas fa-list-ol"></i> جميع المدن المسجلة</h3>
                     <div class="table-responsive">
                         <table id="cities-table">
@@ -493,10 +469,11 @@
             <div class="tab-content" id="locations-tab">
                 <h3 class="section-title"><i class="fas fa-map-marked-alt"></i> خريطة توزيع الزوار</h3>
                 <div class="map-container">
-                    <div id="map" style="height: 100%; width: 100%;"></div>
-                    <p>خريطة تفاعلية ستظهر هنا عند توفر البيانات</p>
+                    <div class="map-placeholder">
+                        <p>خريطة تفاعلية ستظهر هنا عند توفر البيانات</p>
+                    </div>
                 </div>
-
+                
                 <h3 class="section-title"><i class="fas fa-table"></i> تفاصيل المواقع</h3>
                 <div class="table-responsive">
                     <table id="locations-table">
@@ -552,9 +529,9 @@
 
         // دالة لتنسيق التاريخ
         function formatDate(dateString) {
-            const options = {
-                year: 'numeric',
-                month: 'long',
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
@@ -571,12 +548,12 @@
                     tabs.forEach(t => t.classList.remove('active'));
                     // إضافة الفعالية للتبويب المحدد
                     tab.classList.add('active');
-
+                    
                     // إخفاء جميع محتويات التبويبات
                     document.querySelectorAll('.tab-content').forEach(content => {
                         content.classList.remove('active');
                     });
-
+                    
                     // إظهار محتوى التبويب المحدد
                     const tabId = tab.getAttribute('data-tab');
                     document.getElementById(`${tabId}-tab`).classList.add('active');
@@ -597,7 +574,7 @@
                 document.getElementById('content').style.display = 'block';
 
                 // تحديث وقت آخر تحديث
-                document.getElementById('last-updated').textContent =
+                document.getElementById('last-updated').textContent = 
                     `آخر تحديث: ${new Date().toLocaleTimeString('ar-SA')}`;
 
                 // عرض إجمالي الزيارات
@@ -618,8 +595,8 @@
 
                     // حساب الإجمالي أولاً
                     cardsSnapshot.forEach(cardSnapshot => {
-                        const cardCount = typeof cardSnapshot.val() === 'number' ?
-                            cardSnapshot.val() :
+                        const cardCount = typeof cardSnapshot.val() === 'number' ? 
+                            cardSnapshot.val() : 
                             sumAllValues(cardSnapshot);
                         totalCardDownloads += cardCount;
                     });
@@ -627,8 +604,8 @@
                     // عرض البيانات مع النسب المئوية
                     cardsSnapshot.forEach(cardSnapshot => {
                         const cardName = cardSnapshot.key;
-                        const cardCount = typeof cardSnapshot.val() === 'number' ?
-                            cardSnapshot.val() :
+                        const cardCount = typeof cardSnapshot.val() === 'number' ? 
+                            cardSnapshot.val() : 
                             sumAllValues(cardSnapshot);
                         const percentage = ((cardCount / totalCardDownloads) * 100).toFixed(1);
 
@@ -645,30 +622,9 @@
                 }
 
                 // معالجة بيانات الموقع الجغرافي
-                // رسم خريطة التوزيع باستخدام Leaflet
-                const mapContainer = document.getElementById('map');
-                mapContainer.innerHTML = ''; // تفريغ أي محتوى سابق
-
-                const map = L.map('map').setView([24.7136, 46.6753], 5); // مركز السعودية
-
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(map);
-
-                locationsSnapshot.forEach(locationSnapshot => {
-                    const location = locationSnapshot.val();
-                    if (location.lat && location.lng) {
-                        const marker = L.marker([location.lat, location.lng]).addTo(map);
-                        marker.bindPopup(
-                            `<strong>${location.city || 'غير معروف'}</strong><br>${formatDate(location.timestamp)}`
-                            );
-                    }
-                });
-
                 if (locationsSnapshot.exists()) {
                     const locationsCount = locationsSnapshot.numChildren();
-                    document.getElementById('locations-count').textContent = locationsCount.toLocaleString(
-                        'ar-SA');
+                    document.getElementById('locations-count').textContent = locationsCount.toLocaleString('ar-SA');
 
                     // عدادات المدن
                     const cityCounts = {};
@@ -678,10 +634,10 @@
                     locationsSnapshot.forEach(locationSnapshot => {
                         const location = locationSnapshot.val();
                         const city = location.city || 'غير معروف';
-
+                        
                         // زيادة عداد المدينة
                         cityCounts[city] = (cityCounts[city] || 0) + 1;
-
+                        
                         // إضافة صف إلى جدول المواقع
                         const row = document.createElement('tr');
                         row.innerHTML = `
@@ -700,9 +656,9 @@
                     // عرض أهم المدن
                     const topCitiesGrid = document.getElementById('top-cities-grid');
                     topCitiesGrid.innerHTML = '';
-
+                    
                     // عرض أفضل 6 مدن
-                    sortedCities.slice(0, 4).forEach(([city, count]) => {
+                    sortedCities.slice(0, 6).forEach(([city, count]) => {
                         const percentage = ((count / locationsCount) * 100).toFixed(1);
                         const cityCard = document.createElement('div');
                         cityCard.className = 'city-card';
@@ -730,10 +686,8 @@
                     });
                 } else {
                     document.getElementById('locations-count').textContent = '0';
-                    document.querySelector('#locations-table tbody').innerHTML =
-                        '<tr><td colspan="4">لا توجد بيانات موقع متاحة</td></tr>';
-                    document.querySelector('#cities-table tbody').innerHTML =
-                        '<tr><td colspan="3">لا توجد بيانات مدن متاحة</td></tr>';
+                    document.querySelector('#locations-table tbody').innerHTML = '<tr><td colspan="4">لا توجد بيانات موقع متاحة</td></tr>';
+                    document.querySelector('#cities-table tbody').innerHTML = '<tr><td colspan="3">لا توجد بيانات مدن متاحة</td></tr>';
                 }
             }).catch(error => {
                 console.error('Error loading statistics:', error);
@@ -747,14 +701,13 @@
                     </div>
                 `;
             });
-
         }
 
         // إعداد التبويبات وتحميل البيانات عند فتح الصفحة
         document.addEventListener('DOMContentLoaded', () => {
             setupTabs();
             loadStatistics();
-
+            
             // إضافة حدث للزر تحديث
             document.getElementById('refresh-btn').addEventListener('click', () => {
                 document.getElementById('loading').style.display = 'block';
@@ -764,5 +717,4 @@
         });
     </script>
 </body>
-
 </html>
