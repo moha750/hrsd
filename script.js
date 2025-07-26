@@ -299,44 +299,6 @@ function showWhatsAppModal(imageDataUrl) {
 function recordUserLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                const locationData = {
-                    lat: latitude,
-                    lng: longitude,
-                    timestamp: new Date().toISOString()
-                };
-                
-                // تسجيل الموقع في Firebase
-                database.ref('locations').push(locationData)
-                    .then(() => console.log('Location recorded successfully'))
-                    .catch(error => console.error('Error recording location:', error));
-            },
-            (error) => {
-                console.error('Geolocation error:', error);
-                // تسجيل محاولة فاشلة لتحديد الموقع
-                database.ref('location_errors').push({
-                    error: error.message,
-                    timestamp: new Date().toISOString()
-                });
-            }
-        );
-    } else {
-        console.log('Geolocation is not supported by this browser.');
-        database.ref('location_errors').push({
-            error: 'Geolocation not supported',
-            timestamp: new Date().toISOString()
-        });
-    }
-}
-
-// استدعاء الدالة عند تحميل الصفحة
-recordUserLocation();
-
-// أضف هذه الدالة في script.js
-function recordUserLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
             async (position) => {
                 const { latitude, longitude } = position.coords;
                 
