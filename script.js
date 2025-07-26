@@ -127,36 +127,61 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // وظيفة تحميل البطاقة
-    downloadBtn.addEventListener('click', function () {
-        if (!toInput.value.trim() || !fromInput.value.trim()) {
-            document.getElementById('validation-modal').style.display = 'flex';
-            toggleBodyScroll(false);
-            return;
-        }
+downloadBtn.addEventListener('click', function () {
+    if (!toInput.value.trim() || !fromInput.value.trim()) {
+        document.getElementById('validation-modal').style.display = 'flex';
+        toggleBodyScroll(false);
+        return;
+    }
 
-        if (!imageLoaded) {
-            alert('الرجاء الانتظار حتى يتم تحميل الصورة بالكامل');
-            return;
-        }
+    if (!imageLoaded) {
+        alert('الرجاء الانتظار حتى يتم تحميل الصورة بالكامل');
+        return;
+    }
 
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = cardImage.naturalWidth;
-        canvas.height = cardImage.naturalHeight;
-        ctx.drawImage(cardImage, 0, 0, canvas.width, canvas.height);
-        drawTexts(ctx, canvas.width, canvas.height);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = cardImage.naturalWidth;
+    canvas.height = cardImage.naturalHeight;
+    ctx.drawImage(cardImage, 0, 0, canvas.width, canvas.height);
+    drawTexts(ctx, canvas.width, canvas.height);
 
-        const cardTypeName = cardTypeSelect.options[cardTypeSelect.selectedIndex].text;
-        const link = document.createElement('a');
-        link.download = `بطاقة_امتنان_${cardTypeName}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        
-        // عرض نافذة المشاركة بعد التحميل
-        setTimeout(() => {
-            showWhatsAppModal(canvas.toDataURL('image/png'));
-        }, 1000);
+    const cardTypeName = cardTypeSelect.options[cardTypeSelect.selectedIndex].text;
+    const link = document.createElement('a');
+    link.download = `بطاقة_امتنان_${cardTypeName}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    
+    // تسجيل حدث التحميل
+    recordDownload(cardTypeName);
+    
+    // عرض نافذة المشاركة بعد التحميل
+    setTimeout(() => {
+        showWhatsAppModal(canvas.toDataURL('image/png'));
+    }, 1000);
+});
+
+// دالة لتسجيل التحميلات
+function recordDownload(cardType) {
+    const today = new Date().toISOString().split('T')[0];
+    const downloadsRef = database.ref('downloads/' + today);
+    const cardDownloadsRef = database.ref('card_downloads/' + cardType);
+    
+    // تسجيل التحميل اليومي
+    downloadsRef.transaction((current) => {
+        return (current || 0) + 1;
     });
+    
+    // تسجيل تحميل حسب نوع البطاقة
+    cardDownloadsRef.transaction((current) => {
+        return (current || 0) + 1;
+    });
+    
+    // تسجيل حدث في Analytics
+    analytics.logEvent('card_download', {
+        card_type: cardType
+    });
+}
 
     // إغلاق نافذة التحذير
     modalCloseBtn.addEventListener('click', function () {
@@ -191,3 +216,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     observer.observe(cardCreatorSection);
 });
+
+analytics.logEvent('page_visit');
+
+// لتسجيل زيارات الصفحة في Realtime Database
+function recordPageVisit() {
+  const today = new Date().toISOString().split('T')[0];
+  const visitsRef = database.ref('visits/' + today);
+  
+  visitsRef.transaction((current) => {
+    return (current || 0) + 1;
+  });
+}
+
+recordPageVisit();

@@ -158,6 +158,27 @@
         // إضافة السنة الحالية في الفوتر
         document.getElementById('year').textContent = new Date().getFullYear();
     </script>
+    <!-- أضف قبل إغلاق body -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script>
+        // تهيئة Firebase
+        const firebaseConfig = {
+  apiKey: "AIzaSyC7RoFG-bxZVLVI-txBcAEDF_8Jr_57mBs",
+  authDomain: "hrsd-fcb0e.firebaseapp.com",
+  projectId: "hrsd-fcb0e",
+  storageBucket: "hrsd-fcb0e.firebasestorage.app",
+  messagingSenderId: "854796086468",
+  appId: "1:854796086468:web:b58044e5ac266a34d6ed91",
+  measurementId: "G-B9KVSWPRJQ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const analytics = firebase.analytics();
+        const database = firebase.database();
+    </script>
 </body>
 
 </html>
