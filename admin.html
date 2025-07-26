@@ -87,6 +87,32 @@
             color: #F5961E;
             margin-top: 10px;
         }
+
+        /* تنسيقات جديدة لقسم المناطق */
+        .locations-section {
+            margin-top: 40px;
+        }
+
+        .location-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .location-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .location-stat {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            min-width: 200px;
+        }
     </style>
 </head>
 
@@ -105,6 +131,11 @@
             <h2>إجمالي التحميلات</h2>
             <div class="stat-value" id="total-downloads">0</div>
         </div>
+
+        <div class="stat-card">
+            <h2>الزيارات مع الموقع</h2>
+            <div class="stat-value" id="locations-count">0</div>
+        </div>
     </div>
 
     <h2>التحميلات حسب نوع البطاقة</h2>
@@ -118,6 +149,48 @@
         <tbody></tbody>
     </table>
 
+    <div class="locations-section">
+        <h2>المناطق الجغرافية للزوار</h2>
+        <div class="location-info">
+            <p>يتم عرض المناطق بناءً على بيانات الموقع الجغرافي للزوار</p>
+        </div>
+        
+        <div class="location-stats">
+            <div class="location-stat">
+                <h3>المنطقة الشرقية</h3>
+                <div class="stat-value" id="eastern-region">0</div>
+            </div>
+            
+            <div class="location-stat">
+                <h3>المنطقة الغربية</h3>
+                <div class="stat-value" id="western-region">0</div>
+            </div>
+            
+            <div class="location-stat">
+                <h3>المنطقة الشمالية</h3>
+                <div class="stat-value" id="northern-region">0</div>
+            </div>
+            
+            <div class="location-stat">
+                <h3>المنطقة الجنوبية</h3>
+                <div class="stat-value" id="southern-region">0</div>
+            </div>
+        </div>
+        
+        <h3 style="margin-top: 30px;">تفاصيل المواقع</h3>
+        <table id="locations-table">
+            <thead>
+                <tr>
+                    <th>خط العرض</th>
+                    <th>خط الطول</th>
+                    <th>المنطقة</th>
+                    <th>الوقت</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
     <script>
@@ -130,12 +203,22 @@
             messagingSenderId: "854796086468",
             appId: "1:854796086468:web:b58044e5ac266a34d6ed91",
             measurementId: "G-B9KVSWPRJQ",
-            databaseURL: "https://hrsd-fcb0e-default-rtdb.firebaseio.com/" // أضف هذا السطر إذا كان مفقودًا
+            databaseURL: "https://hrsd-fcb0e-default-rtdb.firebaseio.com/"
         };
 
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+
+        // دالة لتحديد المنطقة بناءً على الإحداثيات
+        function determineRegion(lat, lng) {
+            // هذه قيم تقريبية، يمكنك ضبطها حسب حدود المناطق في السعودية
+            if (lat > 24 && lng > 46) return "المنطقة الشرقية";
+            if (lat > 21 && lng < 39) return "المنطقة الغربية";
+            if (lat > 28) return "المنطقة الشمالية";
+            if (lat < 20) return "المنطقة الجنوبية";
+            return "منطقة أخرى";
+        }
 
         // دالة لجمع القيم من جميع الأيام
         function sumAllValues(snapshot) {
@@ -145,7 +228,6 @@
                 if (typeof value === 'number') {
                     total += value;
                 } else if (typeof value === 'object') {
-                    // إذا كانت البيانات كائنات بدلاً من أرقام
                     Object.values(value).forEach(v => {
                         if (typeof v === 'number') total += v;
                     });
@@ -159,8 +241,9 @@
             Promise.all([
                 database.ref('visits').once('value'),
                 database.ref('downloads').once('value'),
-                database.ref('card_downloads').once('value')
-            ]).then(([visitsSnapshot, downloadsSnapshot, cardsSnapshot]) => {
+                database.ref('card_downloads').once('value'),
+                database.ref('locations').once('value')
+            ]).then(([visitsSnapshot, downloadsSnapshot, cardsSnapshot, locationsSnapshot]) => {
                 // إخفاء رسالة التحميل وإظهار المحتوى
                 document.getElementById('loading').style.display = 'none';
                 document.querySelector('.stats-container').style.display = 'flex';
@@ -194,6 +277,52 @@
                 } else {
                     tbody.innerHTML = '<tr><td colspan="2">لا توجد بيانات متاحة</td></tr>';
                 }
+
+                // معالجة بيانات الموقع الجغرافي
+                if (locationsSnapshot.exists()) {
+                    const locationsCount = locationsSnapshot.numChildren();
+                    document.getElementById('locations-count').textContent = locationsCount.toLocaleString();
+
+                    // عدادات المناطق
+                    const regionCounts = {
+                        "المنطقة الشرقية": 0,
+                        "المنطقة الغربية": 0,
+                        "المنطقة الشمالية": 0,
+                        "المنطقة الجنوبية": 0,
+                        "منطقة أخرى": 0
+                    };
+
+                    // عرض تفاصيل المواقع
+                    const locationsTbody = document.querySelector('#locations-table tbody');
+                    locationsTbody.innerHTML = '';
+
+                    locationsSnapshot.forEach(locationSnapshot => {
+                        const location = locationSnapshot.val();
+                        const region = determineRegion(location.lat, location.lng);
+                        
+                        // زيادة عداد المنطقة
+                        regionCounts[region]++;
+                        
+                        // إضافة صف إلى الجدول
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${location.lat.toFixed(4)}</td>
+                            <td>${location.lng.toFixed(4)}</td>
+                            <td>${region}</td>
+                            <td>${new Date(location.timestamp).toLocaleString('ar-SA')}</td>
+                        `;
+                        locationsTbody.appendChild(row);
+                    });
+
+                    // تحديث عدادات المناطق
+                    document.getElementById('eastern-region').textContent = regionCounts["المنطقة الشرقية"].toLocaleString();
+                    document.getElementById('western-region').textContent = regionCounts["المنطقة الغربية"].toLocaleString();
+                    document.getElementById('northern-region').textContent = regionCounts["المنطقة الشمالية"].toLocaleString();
+                    document.getElementById('southern-region').textContent = regionCounts["المنطقة الجنوبية"].toLocaleString();
+                } else {
+                    document.getElementById('locations-count').textContent = '0';
+                    document.querySelector('#locations-table tbody').innerHTML = '<tr><td colspan="4">لا توجد بيانات موقع متاحة</td></tr>';
+                }
             }).catch(error => {
                 console.error('Error loading statistics:', error);
                 document.getElementById('loading').textContent = 'حدث خطأ أثناء تحميل البيانات. يرجى المحاولة لاحقًا.';
@@ -204,5 +333,4 @@
         document.addEventListener('DOMContentLoaded', loadStatistics);
     </script>
 </body>
-
 </html>
