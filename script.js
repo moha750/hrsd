@@ -126,36 +126,6 @@ document.addEventListener('DOMContentLoaded', function () {
         loadImage(this.value);
     });
 
-    // دالة لمشاركة الصورة عبر الواتساب
-    function shareOnWhatsApp(imageDataUrl) {
-        const cardTypeName = cardTypeSelect.options[cardTypeSelect.selectedIndex].text;
-        const message = `*بطاقة امتنان* 🎁\n\nإلى: ${toInput.value}\nمن: ${fromInput.value}\n\n${cardTypeName}\n\n#حملة_امتنان`;
-        
-        // إنشاء رابط واتساب مع النص
-        const shareUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-        
-        // فتح النافذة الجديدة لمشاركة الرسالة
-        window.open(shareUrl, '_blank');
-    }
-
-    // عرض نافذة المشاركة بعد التحميل
-    function showWhatsAppModal(imageDataUrl) {
-        const whatsappModal = document.getElementById('whatsapp-modal');
-        whatsappModal.style.display = 'flex';
-        toggleBodyScroll(false);
-        
-        document.getElementById('whatsapp-share-btn').onclick = function() {
-            shareOnWhatsApp(imageDataUrl);
-            whatsappModal.style.display = 'none';
-            toggleBodyScroll(true);
-        };
-        
-        document.getElementById('whatsapp-cancel-btn').onclick = function() {
-            whatsappModal.style.display = 'none';
-            toggleBodyScroll(true);
-        };
-    }
-
     // وظيفة تحميل البطاقة
     downloadBtn.addEventListener('click', function () {
         if (!toInput.value.trim() || !fromInput.value.trim()) {
