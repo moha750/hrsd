@@ -1,4 +1,24 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // تهيئة Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyC7RoFG-bxZVLVI-txBcAEDF_8Jr_57mBs",
+        authDomain: "hrsd-fcb0e.firebaseapp.com",
+        projectId: "hrsd-fcb0e",
+        storageBucket: "hrsd-fcb0e.firebasestorage.app",
+        messagingSenderId: "854796086468",
+        appId: "1:854796086468:web:b58044e5ac266a34d6ed91",
+        measurementId: "G-B9KVSWPRJQ",
+        databaseURL: "https://hrsd-fcb0e-default-rtdb.firebaseio.com/"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const analytics = firebase.analytics();
+    const database = firebase.database();
+
+    // تسجيل زيارة الصفحة
+    recordPageVisit();
+
     // دالة للتحكم في التمرير
     let scrollPosition = 0;
 
@@ -127,61 +147,80 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // وظيفة تحميل البطاقة
-downloadBtn.addEventListener('click', function () {
-    if (!toInput.value.trim() || !fromInput.value.trim()) {
-        document.getElementById('validation-modal').style.display = 'flex';
-        toggleBodyScroll(false);
-        return;
+    downloadBtn.addEventListener('click', function () {
+        if (!toInput.value.trim() || !fromInput.value.trim()) {
+            document.getElementById('validation-modal').style.display = 'flex';
+            toggleBodyScroll(false);
+            return;
+        }
+
+        if (!imageLoaded) {
+            alert('الرجاء الانتظار حتى يتم تحميل الصورة بالكامل');
+            return;
+        }
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = cardImage.naturalWidth;
+        canvas.height = cardImage.naturalHeight;
+        ctx.drawImage(cardImage, 0, 0, canvas.width, canvas.height);
+        drawTexts(ctx, canvas.width, canvas.height);
+
+        const cardTypeName = cardTypeSelect.options[cardTypeSelect.selectedIndex].text;
+        const link = document.createElement('a');
+        link.download = `بطاقة_امتنان_${cardTypeName}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        // تسجيل حدث التحميل
+        recordDownload(cardTypeName);
+        
+        // عرض نافذة المشاركة بعد التحميل
+        setTimeout(() => {
+            showWhatsAppModal(canvas.toDataURL('image/png'));
+        }, 1000);
+    });
+
+    // دالة لتسجيل التحميلات
+    function recordDownload(cardType) {
+        const today = new Date().toISOString().split('T')[0];
+        const downloadsRef = database.ref('downloads/' + today);
+        const cardDownloadsRef = database.ref('card_downloads/' + cardType);
+        
+        // تسجيل التحميل اليومي
+        downloadsRef.transaction((current) => {
+            return (current || 0) + 1;
+        }).catch(error => {
+            console.error('Error recording download:', error);
+        });
+        
+        // تسجيل تحميل حسب نوع البطاقة
+        cardDownloadsRef.transaction((current) => {
+            return (current || 0) + 1;
+        }).catch(error => {
+            console.error('Error recording card download:', error);
+        });
+        
+        // تسجيل حدث في Analytics
+        analytics.logEvent('card_download', {
+            card_type: cardType
+        });
     }
 
-    if (!imageLoaded) {
-        alert('الرجاء الانتظار حتى يتم تحميل الصورة بالكامل');
-        return;
+    // دالة لتسجيل زيارات الصفحة
+    function recordPageVisit() {
+        const today = new Date().toISOString().split('T')[0];
+        const visitsRef = database.ref('visits/' + today);
+        
+        visitsRef.transaction((current) => {
+            return (current || 0) + 1;
+        }).catch(error => {
+            console.error('Error recording visit:', error);
+        });
+
+        // تسجيل حدث في Analytics
+        analytics.logEvent('page_visit');
     }
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = cardImage.naturalWidth;
-    canvas.height = cardImage.naturalHeight;
-    ctx.drawImage(cardImage, 0, 0, canvas.width, canvas.height);
-    drawTexts(ctx, canvas.width, canvas.height);
-
-    const cardTypeName = cardTypeSelect.options[cardTypeSelect.selectedIndex].text;
-    const link = document.createElement('a');
-    link.download = `بطاقة_امتنان_${cardTypeName}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    
-    // تسجيل حدث التحميل
-    recordDownload(cardTypeName);
-    
-    // عرض نافذة المشاركة بعد التحميل
-    setTimeout(() => {
-        showWhatsAppModal(canvas.toDataURL('image/png'));
-    }, 1000);
-});
-
-// دالة لتسجيل التحميلات
-function recordDownload(cardType) {
-    const today = new Date().toISOString().split('T')[0];
-    const downloadsRef = database.ref('downloads/' + today);
-    const cardDownloadsRef = database.ref('card_downloads/' + cardType);
-    
-    // تسجيل التحميل اليومي
-    downloadsRef.transaction((current) => {
-        return (current || 0) + 1;
-    });
-    
-    // تسجيل تحميل حسب نوع البطاقة
-    cardDownloadsRef.transaction((current) => {
-        return (current || 0) + 1;
-    });
-    
-    // تسجيل حدث في Analytics
-    analytics.logEvent('card_download', {
-        card_type: cardType
-    });
-}
 
     // إغلاق نافذة التحذير
     modalCloseBtn.addEventListener('click', function () {
@@ -217,16 +256,41 @@ function recordDownload(cardType) {
     observer.observe(cardCreatorSection);
 });
 
-analytics.logEvent('page_visit');
+// دالة لعرض نافذة المشاركة عبر واتساب
+function showWhatsAppModal(imageDataUrl) {
+    const modal = document.createElement('div');
+    modal.id = 'whatsapp-modal';
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h3>شارك بطاقتك</h3>
+            <p>هل ترغب في مشاركة بطاقتك عبر واتساب؟</p>
+            <div class="modal-buttons">
+                <button class="whatsapp-btn" id="share-whatsapp">
+                    <i class="fab fa-whatsapp"></i> مشاركة عبر واتساب
+                </button>
+                <button class="cancel-btn" id="cancel-share">
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+    toggleBodyScroll(false);
 
-// لتسجيل زيارات الصفحة في Realtime Database
-function recordPageVisit() {
-  const today = new Date().toISOString().split('T')[0];
-  const visitsRef = database.ref('visits/' + today);
-  
-  visitsRef.transaction((current) => {
-    return (current || 0) + 1;
-  });
+    // إضافة مستمعات الأحداث للأزرار
+    document.getElementById('share-whatsapp').addEventListener('click', function() {
+        const message = 'تحقق من بطاقة الامتنان الرائعة التي تلقيتها!';
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}&media=${encodeURIComponent(imageDataUrl)}`;
+        window.open(whatsappUrl, '_blank');
+        modal.remove();
+        toggleBodyScroll(true);
+    });
+
+    document.getElementById('cancel-share').addEventListener('click', function() {
+        modal.remove();
+        toggleBodyScroll(true);
+    });
 }
-
-recordPageVisit();
