@@ -118,8 +118,40 @@
         <tbody></tbody>
     </table>
 
+    <!-- في ملف admin.html -->
+<!-- بعد قسم إحصائيات الموقع -->
+<h2>الزيارات حسب المنطقة</h2>
+<div id="regions-loading">جار تحميل بيانات المناطق...</div>
+<div id="regions-container" style="display: none;">
+    <div class="stats-container">
+        <div class="stat-card">
+            <h2>أكثر المناطق زيارة</h2>
+            <div class="stat-value" id="top-region">-</div>
+        </div>
+        <div class="stat-card">
+            <h2>إجمالي المناطق المسجلة</h2>
+            <div class="stat-value" id="total-regions">0</div>
+        </div>
+    </div>
+    
+    <table id="regions-stats">
+        <thead>
+            <tr>
+                <th>المنطقة</th>
+                <th>عدد الزيارات</th>
+                <th>النسبة المئوية</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    
+    <!-- يمكن إضافة خريطة هنا إذا أردت -->
+    <div id="map" style="height: 400px; margin-top: 30px; display: none;"></div>
+</div>
+
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    
     <script>
         // تهيئة Firebase
         const firebaseConfig = {
@@ -198,6 +230,71 @@
                 console.error('Error loading statistics:', error);
                 document.getElementById('loading').textContent = 'حدث خطأ أثناء تحميل البيانات. يرجى المحاولة لاحقًا.';
             });
+
+            // في دالة loadStatistics() في admin.html
+// بعد جلب البيانات الأساسية
+database.ref('regions').once('value').then(regionsSnapshot => {
+    document.getElementById('regions-loading').style.display = 'none';
+    document.getElementById('regions-container').style.display = 'block';
+    
+    if (regionsSnapshot.exists()) {
+        const regionsData = {};
+        let totalVisitsByRegion = 0;
+        
+        // جمع البيانات من جميع الأيام
+        regionsSnapshot.forEach(daySnapshot => {
+            daySnapshot.forEach(regionSnapshot => {
+                const regionName = regionSnapshot.key;
+                const visitCount = regionSnapshot.val();
+                
+                if (!regionsData[regionName]) {
+                    regionsData[regionName] = 0;
+                }
+                regionsData[regionName] += visitCount;
+                totalVisitsByRegion += visitCount;
+            });
+        });
+        
+        // تحويل البيانات إلى مصفوفة وترتيبها تنازلياً
+        const regionsArray = Object.entries(regionsData)
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count);
+        
+        // عرض إجمالي المناطق
+        document.getElementById('total-regions').textContent = regionsArray.length;
+        
+        // عرض المنطقة الأكثر زيارة
+        if (regionsArray.length > 0) {
+            document.getElementById('top-region').textContent = 
+                `${regionsArray[0].name} (${regionsArray[0].count})`;
+        }
+        
+        // عرض البيانات في الجدول
+        const tbody = document.querySelector('#regions-stats tbody');
+        tbody.innerHTML = '';
+        
+        regionsArray.forEach(region => {
+            const percentage = ((region.count / totalVisitsByRegion) * 100).toFixed(1);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${region.name}</td>
+                <td>${region.count.toLocaleString()}</td>
+                <td>${percentage}%</td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        // يمكنك هنا أيضاً عرض خريطة إذا أضفت مكتبة الخرائط
+        // initMap(regionsArray);
+    } else {
+        document.querySelector('#regions-stats tbody').innerHTML = 
+            '<tr><td colspan="3">لا توجد بيانات جغرافية متاحة</td></tr>';
+    }
+}).catch(error => {
+    console.error('Error loading regions data:', error);
+    document.getElementById('regions-loading').textContent = 
+        'حدث خطأ أثناء تحميل بيانات المناطق. يرجى المحاولة لاحقًا.';
+});
         }
 
         // تحميل البيانات عند فتح الصفحة

@@ -208,19 +208,86 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // دالة لتسجيل زيارات الصفحة
-    function recordPageVisit() {
-        const today = new Date().toISOString().split('T')[0];
-        const visitsRef = database.ref('visits/' + today);
-        
-        visitsRef.transaction((current) => {
-            return (current || 0) + 1;
-        }).catch(error => {
-            console.error('Error recording visit:', error);
-        });
-
-        // تسجيل حدث في Analytics
-        analytics.logEvent('page_visit');
+// في دالة recordPageVisit()
+function recordPageVisit() {
+    const today = new Date().toISOString().split('T')[0];
+    const visitsRef = database.ref('visits/' + today);
+    
+    // الحصول على معلومات الموقع الجغرافي
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                recordVisitWithLocation(today, visitsRef, latitude, longitude);
+            },
+            (error) => {
+                // إذا فشل الحصول على الموقع، نستخدم عنوان IP لتقدير الموقع
+                recordVisitWithLocation(today, visitsRef, null, null);
+            }
+        );
+    } else {
+        // إذا لم يكن المتصفح يدعم geolocation
+        recordVisitWithLocation(today, visitsRef, null, null);
     }
+
+    // تسجيل حدث في Analytics
+    analytics.logEvent('page_visit');
+}
+
+// دالة مساعدة لتسجيل الزيارة مع بيانات الموقع
+function recordVisitWithLocation(today, visitsRef, lat, lng) {
+    const visitData = {
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        count: 1
+    };
+    
+    if (lat && lng) {
+        visitData.location = {
+            lat: lat,
+            lng: lng
+        };
+    }
+    
+    visitsRef.transaction((current) => {
+        if (!current) return visitData;
+        current.count = (current.count || 0) + 1;
+        return current;
+    }).catch(error => {
+        console.error('Error recording visit:', error);
+    });
+    
+    // تسجيل بيانات الموقع بشكل منفصل لسهولة الاستعلام
+    if (lat && lng) {
+        const region = determineRegion(lat, lng); // دالة لتحديد المنطقة (سننشئها لاحقاً)
+        const regionRef = database.ref(`regions/${today}/${region}`);
+        regionRef.transaction((current) => {
+            return (current || 0) + 1;
+        });
+    }
+}
+
+// دالة لتحديد المنطقة بناءً على الإحداثيات (مثال مبسط)
+function determineRegion(lat, lng) {
+    // هذا مثال مبسط، في الواقع تحتاج إلى استخدام خدمة مثل Google Maps Geocoding
+    // أو قاعدة بيانات للمناطق
+    
+    // بالنسبة للمملكة العربية السعودية
+    if (lat >= 17 && lat <= 32 && lng >= 34 && lng <= 56) {
+        // تحديد المناطق بناءً على الإحداثيات
+        if (lat >= 24 && lat <= 28 && lng >= 46 && lng <= 50) {
+            return "الرياض";
+        } else if (lat >= 21 && lat <= 25 && lng >= 39 && lng <= 42) {
+            return "مكة المكرمة";
+        } else if (lat >= 26 && lat <= 28 && lng >= 49 && lng <= 51) {
+            return "المنطقة الشرقية";
+        } else if (lat >= 24 && lat <= 26 && lng >= 44 && lng <= 46) {
+            return "القصيم";
+        }
+        // يمكن إضافة المزيد من المناطق
+    }
+    
+    return "غير معروف";
+}
 
     // إغلاق نافذة التحذير
     modalCloseBtn.addEventListener('click', function () {
