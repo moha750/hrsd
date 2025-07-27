@@ -174,11 +174,6 @@ document.addEventListener('DOMContentLoaded', function () {
         
         // تسجيل حدث التحميل
         recordDownload(cardTypeName);
-        
-        // عرض نافذة المشاركة بعد التحميل
-        setTimeout(() => {
-            showWhatsAppModal(canvas.toDataURL('image/png'));
-        }, 1000);
     });
 
     // دالة لتسجيل التحميلات
@@ -256,45 +251,6 @@ document.addEventListener('DOMContentLoaded', function () {
     observer.observe(cardCreatorSection);
 });
 
-// دالة لعرض نافذة المشاركة عبر واتساب
-function showWhatsAppModal(imageDataUrl) {
-    const modal = document.createElement('div');
-    modal.id = 'whatsapp-modal';
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <h3>شارك بطاقتك</h3>
-            <p>هل ترغب في مشاركة بطاقتك عبر واتساب؟</p>
-            <div class="modal-buttons">
-                <button class="whatsapp-btn" id="share-whatsapp">
-                    <i class="fab fa-whatsapp"></i> مشاركة عبر واتساب
-                </button>
-                <button class="cancel-btn" id="cancel-share">
-                    إلغاء
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    modal.style.display = 'flex';
-    toggleBodyScroll(false);
-
-    // إضافة مستمعات الأحداث للأزرار
-    document.getElementById('share-whatsapp').addEventListener('click', function() {
-        const message = 'تحقق من بطاقة الامتنان الرائعة التي تلقيتها!';
-        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}&media=${encodeURIComponent(imageDataUrl)}`;
-        window.open(whatsappUrl, '_blank');
-        modal.remove();
-        toggleBodyScroll(true);
-    });
-
-    document.getElementById('cancel-share').addEventListener('click', function() {
-        modal.remove();
-        toggleBodyScroll(true);
-    });
-}
-
 // أضف هذه الدالة في script.js
 function recordUserLocation() {
     if (navigator.geolocation) {
@@ -358,3 +314,4 @@ async function getCityName(lat, lng) {
 
 // استدعاء الدالة عند تحميل الصفحة
 recordUserLocation();
+

@@ -697,29 +697,3 @@ button:hover,
     }
 }
 
-/* أنماط نافذة الواتساب */
-.modal-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.whatsapp-btn {
-    background-color: #25D366;
-    color: white;
-}
-
-.whatsapp-btn:hover {
-    background-color: #17b14f;
-}
-
-.cancel-btn {
-    background-color: #f8f9fa;
-    color: var(--dark-color);
-}
-
-.cancel-btn:hover {
-    background-color: #e9ecef;
-}
