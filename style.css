@@ -446,14 +446,6 @@ button i {
     color: rgba(255, 255, 255, 0.8);
 }
 
-.copyright {
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.6);
-}
-
 button,
 .hero-btn {
     background-color: var(--secondary-color);
@@ -542,6 +534,8 @@ button:hover,
     color: rgba(255, 255, 255, 0.7);
     width: 100%;
     text-align: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
 }
 
 /* Animation for footer elements */
