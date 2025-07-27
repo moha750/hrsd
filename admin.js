@@ -16,7 +16,7 @@ const database = firebase.database();
 
 // متغيرات التحقق من كلمة المرور
 let passwordVerified = false;
-const correctPassword = "12341234";
+const correctPassword = "99946";
 let currentProtectedTab = null;
 
 // دالة لجمع القيم من جميع الأيام
